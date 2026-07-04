@@ -43,6 +43,7 @@ cd fedora-hacker-setup
 ./install.sh --all        # install everything
 ./install.sh --list       # show available categories
 ./install.sh recon web    # install specific categories
+./install.sh --dry-run --all   # print what would be installed/changed, without doing it
 ```
 
 Run it as your normal user (not root) — it calls `sudo` itself wherever

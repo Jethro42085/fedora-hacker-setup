@@ -7,6 +7,7 @@
 #   ./install.sh --all           install every category
 #   ./install.sh --list          list available categories
 #   ./install.sh recon web       install only the named categories
+#   ./install.sh --dry-run ...   print what would be done, without changing anything
 #
 # Always run as your normal user; sudo is invoked only where needed.
 
@@ -58,7 +59,9 @@ readonly CATEGORY_ORDER=(base recon web exploitation wireless forensics reversin
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") [--all | --list | category [category ...]]
+Usage: $(basename "$0") [--dry-run] [--all | --list | category [category ...]]
+
+--dry-run   print what would be installed/changed, without making any changes
 
 Categories:
 EOF
@@ -110,6 +113,20 @@ interactive_menu() {
 main() {
     require_not_root
     require_fedora
+
+    local args=() arg
+    for arg in "$@"; do
+        if [[ "$arg" == "--dry-run" ]]; then
+            DRY_RUN=1
+        else
+            args+=("$arg")
+        fi
+    done
+    set -- "${args[@]}"
+
+    if is_dry_run; then
+        log_info "Dry-run mode: no packages or system changes will be made"
+    fi
 
     if [[ $# -eq 0 ]]; then
         interactive_menu

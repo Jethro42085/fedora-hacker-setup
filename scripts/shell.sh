@@ -14,14 +14,18 @@ shell_install() {
     dnf_install zsh tmux util-linux-user
 
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        log_info "Installing oh-my-zsh"
-        if RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
-            "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
-            &>/dev/null; then
-            log_ok "oh-my-zsh installed"
+        if is_dry_run; then
+            log_info "[dry-run] would install oh-my-zsh"
         else
-            log_error "Failed to install oh-my-zsh"
-            FAILED_ITEMS+=("oh-my-zsh")
+            log_info "Installing oh-my-zsh"
+            if RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
+                "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+                &>/dev/null; then
+                log_ok "oh-my-zsh installed"
+            else
+                log_error "Failed to install oh-my-zsh"
+                FAILED_ITEMS+=("oh-my-zsh")
+            fi
         fi
     else
         log_ok "oh-my-zsh already installed"
@@ -31,41 +35,53 @@ shell_install() {
         local marker="# --- fedora-hacker-setup ---"
         local zshrc="$HOME/.zshrc"
         if ! grep -qF "$marker" "$zshrc" 2>/dev/null; then
-            # ZSH_THEME/plugins only take effect if set before oh-my-zsh.sh is
-            # sourced, so insert above that line rather than just appending.
-            if [[ -f "$zshrc" ]] && grep -q 'oh-my-zsh\.sh"' "$zshrc"; then
-                local tmp
-                tmp="$(mktemp)"
-                awk -v marker="$marker" -v extra="$REPO_ROOT/config/zshrc.extra" '
-                    !done && /oh-my-zsh\.sh"/ {
-                        print marker
-                        while ((getline line < extra) > 0) print line
-                        print ""
-                        done = 1
-                    }
-                    { print }
-                ' "$zshrc" > "$tmp"
-                mv "$tmp" "$zshrc"
+            if is_dry_run; then
+                log_info "[dry-run] would add fedora-hacker-setup block to ~/.zshrc"
             else
-                {
-                    printf '\n%s\n' "$marker"
-                    cat "$REPO_ROOT/config/zshrc.extra"
-                } >> "$zshrc"
+                # ZSH_THEME/plugins only take effect if set before oh-my-zsh.sh is
+                # sourced, so insert above that line rather than just appending.
+                if [[ -f "$zshrc" ]] && grep -q 'oh-my-zsh\.sh"' "$zshrc"; then
+                    local tmp
+                    tmp="$(mktemp)"
+                    awk -v marker="$marker" -v extra="$REPO_ROOT/config/zshrc.extra" '
+                        !done && /oh-my-zsh\.sh"/ {
+                            print marker
+                            while ((getline line < extra) > 0) print line
+                            print ""
+                            done = 1
+                        }
+                        { print }
+                    ' "$zshrc" > "$tmp"
+                    mv "$tmp" "$zshrc"
+                else
+                    {
+                        printf '\n%s\n' "$marker"
+                        cat "$REPO_ROOT/config/zshrc.extra"
+                    } >> "$zshrc"
+                fi
+                log_ok "Added fedora-hacker-setup block to ~/.zshrc"
             fi
-            log_ok "Added fedora-hacker-setup block to ~/.zshrc"
         else
             log_ok "$HOME/.zshrc already includes fedora-hacker-setup block"
         fi
     fi
 
     if [[ -f "$REPO_ROOT/config/tmux.conf" ]]; then
-        cp "$REPO_ROOT/config/tmux.conf" "$HOME/.tmux.conf"
-        log_ok "Installed ~/.tmux.conf"
+        if is_dry_run; then
+            log_info "[dry-run] would install ~/.tmux.conf"
+        else
+            cp "$REPO_ROOT/config/tmux.conf" "$HOME/.tmux.conf"
+            log_ok "Installed ~/.tmux.conf"
+        fi
     fi
 
     if command -v zsh &>/dev/null && [[ "$SHELL" != *zsh ]]; then
-        log_info "Setting zsh as your default shell (takes effect on next login)"
-        sudo chsh -s "$(command -v zsh)" "$USER" || log_warn "Could not change default shell"
+        if is_dry_run; then
+            log_info "[dry-run] would set zsh as your default shell"
+        else
+            log_info "Setting zsh as your default shell (takes effect on next login)"
+            sudo chsh -s "$(command -v zsh)" "$USER" || log_warn "Could not change default shell"
+        fi
     fi
 }
 

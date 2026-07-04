@@ -18,6 +18,12 @@ log_error() { printf '%s[-]%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; }
 # Tracks packages/tools that failed so install.sh can print a summary at the end.
 FAILED_ITEMS=()
 
+# Set DRY_RUN=1 (see install.sh --dry-run) to log intended actions without
+# making any changes to the system.
+DRY_RUN="${DRY_RUN:-0}"
+
+is_dry_run() { [[ "$DRY_RUN" == "1" ]]; }
+
 require_fedora() {
     if [[ ! -f /etc/os-release ]] || ! grep -qi '^ID=fedora' /etc/os-release; then
         log_warn "This does not look like Fedora. Continuing anyway, but dnf-based steps may fail."
@@ -39,6 +45,10 @@ dnf_install() {
             log_ok "$pkg already installed"
             continue
         fi
+        if is_dry_run; then
+            log_info "[dry-run] would install $pkg"
+            continue
+        fi
         log_info "Installing $pkg"
         if sudo dnf install -y "$pkg" &>/dev/null; then
             log_ok "$pkg installed"
@@ -51,6 +61,10 @@ dnf_install() {
 
 copr_enable() {
     local repo=$1
+    if is_dry_run; then
+        log_info "[dry-run] would enable COPR repo $repo"
+        return 0
+    fi
     log_info "Enabling COPR repo $repo"
     if ! sudo dnf copr enable -y "$repo" &>/dev/null; then
         log_error "Failed to enable COPR repo $repo"
@@ -62,6 +76,10 @@ copr_enable() {
 pipx_install() {
     local pkg
     for pkg in "$@"; do
+        if is_dry_run; then
+            log_info "[dry-run] would pipx install $pkg"
+            continue
+        fi
         log_info "pipx install $pkg"
         if pipx install "$pkg" &>/dev/null; then
             log_ok "$pkg installed via pipx"
@@ -75,6 +93,10 @@ pipx_install() {
 go_install() {
     local pkg
     for pkg in "$@"; do
+        if is_dry_run; then
+            log_info "[dry-run] would go install $pkg"
+            continue
+        fi
         log_info "go install $pkg"
         if go install "$pkg"@latest &>/dev/null; then
             log_ok "$pkg installed via go"
