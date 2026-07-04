@@ -1,0 +1,9 @@
+# Appended by scripts/shell.sh. Safe to edit or remove.
+
+ZSH_THEME="agnoster"
+plugins=(git sudo colored-man-pages)
+
+alias ll='ls -lah'
+alias ports='sudo ss -tulpn'
+
+export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
