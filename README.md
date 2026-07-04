@@ -21,7 +21,7 @@ what you need:
 | `recon`         | nmap, masscan, wireshark, subfinder, httpx, naabu, amass, theHarvester |
 | `web`           | nikto, sqlmap, gobuster, ffuf, OWASP ZAP, wfuzz                  |
 | `exploitation`  | Metasploit Framework, pwntools, impacket, ropper                 |
-| `wireless`      | aircrack-ng, reaver, macchanger                                  |
+| `wireless`      | aircrack-ng, reaver, macchanger, kismet (wireless network detection/auditing) |
 | `forensics`     | binwalk, foremost, sleuthkit, exiftool, testdisk, volatility3    |
 | `reversing`     | radare2, gdb, ghidra, strace, ltrace                             |
 | `passwords`     | john, hashcat, hydra, seclists                                   |

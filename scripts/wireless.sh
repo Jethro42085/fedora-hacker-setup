@@ -16,7 +16,8 @@ wireless_install() {
     dnf_install \
         aircrack-ng \
         reaver \
-        macchanger
+        macchanger \
+        kismet
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
