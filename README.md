@@ -54,6 +54,9 @@ cd fedora-hacker-setup
 ./install.sh --dry-run --all   # print what would be installed/changed, without doing it
 ```
 
+Review the category table above and run with `--dry-run` first if you want
+to see exactly what a category installs before committing to it.
+
 Run it as your normal user (not root) — it calls `sudo` itself wherever
 needed.
 
