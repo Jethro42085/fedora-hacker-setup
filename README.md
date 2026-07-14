@@ -27,6 +27,13 @@ what you need:
 | `passwords`     | john, hashcat, hydra, seclists                                   |
 | `shell`         | zsh + oh-my-zsh + tmux config (quality-of-life, not security tooling) |
 
+Two categories carry extra legal risk and deserve explicit reminders:
+- **`wireless`** (aircrack-ng, reaver, kismet, macchanger): only scan,
+  capture, or deauth on networks and devices you own or are explicitly
+  authorized to test.
+- **`passwords`** (john, hashcat, hydra): only attack credentials or
+  systems you own or are explicitly authorized to test.
+
 Each category is independent — `scripts/<category>.sh` can also be run
 directly, e.g. `./scripts/recon.sh`.
 
