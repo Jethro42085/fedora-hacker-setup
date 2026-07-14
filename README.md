@@ -22,6 +22,7 @@ what you need:
 | `web`           | nikto, sqlmap, gobuster, ffuf, OWASP ZAP, wfuzz                  |
 | `exploitation`  | Metasploit Framework, pwntools, impacket, ropper                 |
 | `wireless`      | aircrack-ng, reaver, macchanger, kismet (wireless network detection/auditing) |
+| `sdr`           | rtl-sdr, gqrx (software-defined radio)                           |
 | `forensics`     | binwalk, foremost, sleuthkit, exiftool, testdisk, volatility3    |
 | `reversing`     | radare2, gdb, ghidra, strace, ltrace                             |
 | `passwords`     | john, hashcat, hydra, seclists                                   |

@@ -32,6 +32,8 @@ source "$INSTALL_ROOT/scripts/web.sh"
 source "$INSTALL_ROOT/scripts/exploitation.sh"
 # shellcheck source=scripts/wireless.sh
 source "$INSTALL_ROOT/scripts/wireless.sh"
+# shellcheck source=scripts/sdr.sh
+source "$INSTALL_ROOT/scripts/sdr.sh"
 # shellcheck source=scripts/forensics.sh
 source "$INSTALL_ROOT/scripts/forensics.sh"
 # shellcheck source=scripts/reversing.sh
@@ -48,6 +50,7 @@ declare -A CATEGORIES=(
     [web]=web_install
     [exploitation]=exploitation_install
     [wireless]=wireless_install
+    [sdr]=sdr_install
     [forensics]=forensics_install
     [reversing]=reversing_install
     [passwords]=passwords_install
@@ -55,7 +58,7 @@ declare -A CATEGORIES=(
 )
 
 # Order matters: base first, shell last, everything else in between.
-readonly CATEGORY_ORDER=(base recon web exploitation wireless forensics reversing passwords shell)
+readonly CATEGORY_ORDER=(base recon web exploitation wireless sdr forensics reversing passwords shell)
 
 usage() {
     cat <<EOF
