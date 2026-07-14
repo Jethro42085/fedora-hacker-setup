@@ -10,8 +10,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 base_install() {
     log_info "=== Base system ==="
 
-    log_info "Refreshing package metadata and upgrading system"
-    sudo dnf upgrade -y --refresh || log_warn "System upgrade reported errors, continuing"
+    if is_dry_run; then
+        log_info "[dry-run] would refresh package metadata and upgrade system"
+    else
+        log_info "Refreshing package metadata and upgrading system"
+        sudo dnf upgrade -y --refresh || log_warn "System upgrade reported errors, continuing"
+    fi
 
     dnf_install \
         git curl wget vim tmux zsh htop tree jq unzip \
@@ -20,7 +24,11 @@ base_install() {
         golang rust cargo \
         openssl-devel
 
-    pipx ensurepath &>/dev/null || true
+    if is_dry_run; then
+        log_info "[dry-run] would run 'pipx ensurepath'"
+    else
+        pipx ensurepath &>/dev/null || true
+    fi
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

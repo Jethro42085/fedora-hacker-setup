@@ -31,8 +31,12 @@ recon_install() {
         log_warn "go not found, skipping subfinder/httpx/naabu/amass (run scripts/base.sh first)"
     fi
 
-    log_info "Adding current user to the 'wireshark' group for non-root packet capture"
-    sudo usermod -aG wireshark "$USER" || log_warn "Could not add $USER to wireshark group"
+    if is_dry_run; then
+        log_info "[dry-run] would add $USER to the 'wireshark' group for non-root packet capture"
+    else
+        log_info "Adding current user to the 'wireshark' group for non-root packet capture"
+        sudo usermod -aG wireshark "$USER" || log_warn "Could not add $USER to wireshark group"
+    fi
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
